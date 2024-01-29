@@ -47,4 +47,23 @@ class ProcessSalaries(ProcessJobs):
     def filter_by_salary_range(
         self, jobs: List[dict], salary: Union[str, int]
     ) -> List[Dict]:
-        pass
+        filtered_jobs = []
+        if (
+            salary is None or salary == '' or
+            isinstance(salary, (list, dict)) or
+            callable(salary)
+        ):
+            return filtered_jobs
+
+        for job in jobs:
+            if (
+                isinstance(job.get('min_salary'), (int, str)) and
+                isinstance(job.get('max_salary'), (int, str))
+            ):
+                min_salary = int(job['min_salary'])
+                max_salary = int(job['max_salary'])
+
+                if min_salary <= int(salary) <= max_salary:
+                    filtered_jobs.append(job)
+
+        return filtered_jobs
