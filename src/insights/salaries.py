@@ -17,10 +17,32 @@ class ProcessSalaries(ProcessJobs):
         return filter_salary
 
     def get_min_salary(self) -> int:
-        pass
+        filter_salary = 999999999999
+        for job in self.jobs_list:
+            if (
+                job['min_salary'].isdigit() and
+                int(job['min_salary']) < filter_salary
+            ):
+                filter_salary = int(job['min_salary'])
+        return filter_salary
 
     def matches_salary_range(self, job: Dict, salary: Union[int, str]) -> bool:
-        pass
+        maximo = job.get('max_salary')
+        minimo = job.get('min_salary')
+
+        if maximo is None or minimo is None:
+            raise ValueError('Salary_Range não especificado')
+        if not (isinstance(maximo, (int, str)) and
+                isinstance(minimo, (int, str)) and
+                isinstance(salary, (int, str))
+                ):
+            raise ValueError('Voce não está usando números')
+        if minimo > maximo:
+            raise ValueError('max_salary deve ser maior que min_salary')
+        maximo = int(maximo)
+        minimo = int(minimo)
+        salary = int(salary)
+        return maximo >= salary >= minimo
 
     def filter_by_salary_range(
         self, jobs: List[dict], salary: Union[str, int]
